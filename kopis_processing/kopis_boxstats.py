@@ -7,6 +7,7 @@ import xmltodict
 from dotenv import load_dotenv
 
 # 환경변수에서 서비스 키 가져오기
+load_dotenv()
 SERVICE_KEY = os.getenv("SERVICE_KEY")
 
 def collect_boxstats_day(start_date, end_date):
@@ -47,7 +48,7 @@ def collect_boxstats_day(start_date, end_date):
             "eddate": end_date,                      # 요청 종료일
             "ststype": "day"                         # 조회 유형
         }
-        records.append(record)coll
+        records.append(record)
 
     # records 리스트를 pandas DataFrame으로 변환
     df = pd.DataFrame(records)
@@ -74,8 +75,8 @@ def collect_boxstats_day(start_date, end_date):
     df.to_csv("boxstats_period.csv", mode="a", index=False, header=False, encoding="utf-8")
 
 def main():
-    current = datetime(2025, 1, 1)
-    end = datetime(2025, 3, 31)
+    current = datetime(2024, 1, 1)
+    end = datetime(2025, 2, 28)
 
     while current < end:
         period_end = current + timedelta(days=30) # 최대 31일 단위로 조회 (날짜 제한)
