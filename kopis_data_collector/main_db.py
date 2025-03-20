@@ -30,7 +30,7 @@ def main():
         collect_performance_list(segment_start_str, segment_end_str, cpage=1, rows=100)
         
         # 특정 공연(장르 AAAA)에 대한 공연별 통계 수집
-        collect_performance_stats(segment_start_str, segment_end_str, shcate="AAAA", shcate="AAAA", cpage=1, rows=10)
+        collect_performance_stats(segment_start_str, segment_end_str, shcate="AAAA", shprfnm="", cpage=1, rows=10)
         
         # 박스스탯(예매 통계) 수집
         collect_boxstats_day(segment_start_str, segment_end_str)

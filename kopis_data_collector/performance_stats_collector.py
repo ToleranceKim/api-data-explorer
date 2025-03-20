@@ -7,9 +7,11 @@ from dotenv import load_dotenv
 load_dotenv()
 SERVICE_KEY = os.getenv("SERVICE_KEY")
 
-def collect_performance_stats(start_date, end_date, shcate, shprfnm, cpage=1, rows=10, filename=None):
-    if filename is None:
-        filename = f"data/prfsts_prf_by_{shcate}_{shprfnm}_{start_date}_{end_date}.csv"
+def collect_performance_stats(start_date, end_date, shcate, shprfnm, cpage=1, rows=10):
+    """
+    공연별 통계(prfstsPrfBy) API에서 DataFrame을 반환만 하는 함수.
+    CSV 저장은 하지 않고, 메인 스크립트에서 처리.
+    """
     url = "http://www.kopis.or.kr/openApi/restful/prfstsPrfBy"
     params = {
         "service": SERVICE_KEY,
@@ -22,9 +24,13 @@ def collect_performance_stats(start_date, end_date, shcate, shprfnm, cpage=1, ro
     }
     response = requests.get(url, params=params)
     data_dict = xmltodict.parse(response.text)
+
+    # XML 파싱
     items = data_dict.get("prfsts", {}).get("prfst", [])
     if isinstance(items, dict):
         items = [items]
+
+    # 레코드 구성
     records = []
     for item in items:
         record = {
@@ -33,10 +39,14 @@ def collect_performance_stats(start_date, end_date, shcate, shprfnm, cpage=1, ro
             "prfpdfrom": item.get("prfpdfrom"),
             "prfpdto": item.get("prfpdto"),
             "prfdtcnt": item.get("prfdtcnt")
-            # 실제 응답에 매출액(amount), 관객수(nmrs) 등의 필드가 있다면 여기에 추가
+            # API에 따라 매출액(amount), 관객수(nmrs) 등이 있으면 여기에 추가
         }
         records.append(record)
+
+    # DataFrame 생성
     df = pd.DataFrame(records)
+
+    # 컬럼명 매핑
     rename_dict = {
         "mt20id": "공연ID",
         "prfnm": "공연명",
@@ -45,4 +55,6 @@ def collect_performance_stats(start_date, end_date, shcate, shprfnm, cpage=1, ro
         "prfdtcnt": "상연횟수"
     }
     df = df.rename(columns=rename_dict)
-    df.to_csv(filename, index=False, encoding="utf-8")
+
+    # CSV 저장 대신 DataFrame만 반환
+    return df

@@ -7,21 +7,24 @@ from dotenv import load_dotenv
 load_dotenv()
 SERVICE_KEY = os.getenv("SERVICE_KEY")
 
-def collect_boxstats_day(start_date, end_date, filename=None):
-    if filename is None:
-        filename = f"data/boxstats_{start_date}_{end_date}.csv"
+def collect_boxstats_day(start_date, end_date):
+    """
+    예매통계 기간별 조회(boxStats) API에서 DataFrame을 반환만 하는 함수.
+    """
     url = "http://www.kopis.or.kr/openApi/restful/boxStats"
     params = {
         "service": SERVICE_KEY,
-        "ststype": "day", 
+        "ststype": "day",
         "stdate": start_date,
         "eddate": end_date
     }
     response = requests.get(url, params=params)
     data_dict = xmltodict.parse(response.text)
+
     items = data_dict.get("box-statsofs", {}).get("boxStatsof", [])
     if isinstance(items, dict):
         items = [items]
+
     records = []
     for item in items:
         record = {
@@ -37,8 +40,12 @@ def collect_boxstats_day(start_date, end_date, filename=None):
             "ststype": "day"
         }
         records.append(record)
+
     df = pd.DataFrame(records)
+    # '합계' 행 제거
     df = df[df["prfdt"] != "합계"]
+
+    # 컬럼명 매핑
     rename_dict = {
         "prfdt": "날짜",
         "prfcnt": "공연건수",
@@ -52,4 +59,6 @@ def collect_boxstats_day(start_date, end_date, filename=None):
         "ststype": "조회타입"
     }
     df = df.rename(columns=rename_dict)
-    df.to_csv(filename, index=False, encoding="utf-8")
+
+    # DataFrame 반환
+    return df
