@@ -14,7 +14,7 @@ def collect_prfplc_detail(mt10id, service_key=SERVICE_KEY):
     - mt10id: 공연시설 ID (예: 'FC001247')
     - service_key: API 서비스 키
     """
-    endpoint = f"http://www.kopis.or.kr/openApi/restful/pblprfr/{mt10id}"
+    endpoint = f"http://www.kopis.or.kr/openApi/restful/prfplc/{mt10id}"
     params = {"service": service_key}
 
     response = requests.get(endpoint, params=params)

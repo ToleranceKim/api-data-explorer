@@ -1,4 +1,5 @@
-# 13. 장르별 통계 목록 조회 (prfstsCateService)
+# perfstats_genre_collector.py
+
 import requests
 import pandas as pd
 import xmltodict
@@ -8,16 +9,10 @@ from dotenv import load_dotenv
 load_dotenv()
 SERVICE_KEY = os.getenv("SERVICE_KEY")
 
-def collect_prfsts_cate(
-    stdate,
-    eddate,
-    service_key=SERVICE_KEY
-):
+def collect_prfsts_cate(stdate, eddate, service_key=SERVICE_KEY):
     """
-    13. 장르별 통계 목록 조회(prfstsCateService)
-
+    13. 장르별 통계 목록 조회 (prfstsCateService)
     - stdate, eddate: YYYYMMDD (최대 31일)
-    - service_key: API 서비스 키
     """
     endpoint = "http://www.kopis.or.kr/openApi/restful/prfstsCate"
     params = {
@@ -30,6 +25,8 @@ def collect_prfsts_cate(
     response.raise_for_status()
 
     data_dict = xmltodict.parse(response.text)
+
+    # 루트: <Prfsts>, 반복: <prfst>
     items = data_dict.get("Prfsts", {}).get("prfst", [])
     if isinstance(items, dict):
         items = [items]
@@ -37,13 +34,13 @@ def collect_prfsts_cate(
     records = []
     for item in items:
         record = {
-            "cate": item.get("cate"),
-            "prfprocnt": item.get("prfprocnt"),
-            "prfdtcnt": item.get("prfdtcnt"),
-            "amount": item.get("amount"),
-            "amountshr": item.get("amountshr"),
-            "nmrs": item.get("nmrs"),
-            "nmrsshr": item.get("nmrsshr")
+            "cate": item.get("cate"),           # 장르코드/명
+            "prfprocnt": item.get("prfprocnt"), # 개막편수
+            "prfdtcnt": item.get("prfdtcnt"),   # 상연횟수
+            "amount": item.get("amount"),       # 매출액
+            "amountshr": item.get("amountshr"), # 매출액점유율
+            "nmrs": item.get("nmrs"),           # 관객수
+            "nmrsshr": item.get("nmrsshr")      # 관객점유율
         }
         records.append(record)
 
