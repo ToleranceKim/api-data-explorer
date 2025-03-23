@@ -1,3 +1,4 @@
+# 3. 공연시설 목록 조회 (prfplcService)
 import requests
 import pandas as pd
 import xmltodict
@@ -7,35 +8,50 @@ from dotenv import load_dotenv
 load_dotenv()
 SERVICE_KEY = os.getenv("SERVICE_KEY")
 
-def collect_venue_list(cpage=1, rows=5, shprfnmfct=None, signgucode=None, signgucodesub=None):
+def collect_prfplc_list(
+    cpage=1,
+    rows=10,
+    shprfnmfct=None,
+    fcltychartr=None,
+    signgucode=None,
+    signgucodesub=None,
+    afterdate=None,
+    service_key=SERVICE_KEY
+):
     """
-    공연시설 목록 조회(prfplcService) API에서 DataFrame을 반환하는 함수.
-    CSV 저장은 하지 않고, DataFrame만 return.
+    3. 공연시설 목록 조회(prfplcService)
+
+    - cpage: 현재페이지
+    - rows: 페이지당 목록 수
+    - shprfnmfct: 공연시설명
+    - fcltychartr: 공연시설특성코드
+    - signgucode: 시도코드
+    - signgucodesub: 구군코드
+    - afterdate: 해당일자 이후 등록/수정된 항목만 (YYYYMMDD)
+    - service_key: API 서비스 키
     """
-    url = "http://www.kopis.or.kr/openApi/restful/prfplc"
+    endpoint = "http://www.kopis.or.kr/openApi/restful/prfplc"
     params = {
-        "service": SERVICE_KEY,
+        "service": service_key,
         "cpage": cpage,
         "rows": rows
     }
-
     if shprfnmfct:
         params["shprfnmfct"] = shprfnmfct
+    if fcltychartr:
+        params["fcltychartr"] = fcltychartr
     if signgucode:
         params["signgucode"] = signgucode
     if signgucodesub:
         params["signgucodesub"] = signgucodesub
+    if afterdate:
+        params["afterdate"] = afterdate
 
-    response = requests.get(url, params=params)
-
-    # 디버깅: 응답 상태 코드와 일부 내용 확인 (필요하다면 주석 해제)
-    # print("응답 상태 코드:", response.status_code)
-    # print("응답 내용:", response.text)
+    response = requests.get(endpoint, params=params)
+    response.raise_for_status()
 
     data_dict = xmltodict.parse(response.text)
     items = data_dict.get("dbs", {}).get("db", [])
-
-    # items가 단일 dict인 경우 리스트로 감싸기
     if isinstance(items, dict):
         items = [items]
 
@@ -53,11 +69,9 @@ def collect_venue_list(cpage=1, rows=5, shprfnmfct=None, signgucode=None, signgu
         records.append(record)
 
     df = pd.DataFrame(records)
-
-    # 컬럼명 매핑
     rename_dict = {
-        "mt10id": "시설ID",
-        "fcltynm": "시설명",
+        "mt10id": "공연시설ID",
+        "fcltynm": "공연시설명",
         "mt13cnt": "공연장수",
         "fcltychartr": "시설특성코드",
         "sidonm": "시도명",
@@ -66,5 +80,4 @@ def collect_venue_list(cpage=1, rows=5, shprfnmfct=None, signgucode=None, signgu
     }
     df = df.rename(columns=rename_dict)
 
-    # CSV 저장 로직 제거 → DataFrame 반환
     return df
