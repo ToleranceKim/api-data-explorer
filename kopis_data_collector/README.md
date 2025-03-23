@@ -32,3 +32,9 @@
 - (17번) 수상작 목록 조회   (prfawadService) : cpage 로직 완료
 - (18번) 축제 목록 조회   (prffestService) : cpage 로직 완료
 - (19번) 극작가 목록 조회   (prferService) : cpage 로직 완료
+
+다음 확인 사항
+
+1. main_detail.py, main_facility.py 정상 동작 확인
+2. (11) 기간별 통계 결과 없음, (12) 지역별 통계 결과 없음, (13) 장르별 통계 결과 없음 디버깅
+3. 장기간 수집 테스트
