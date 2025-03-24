@@ -25,8 +25,8 @@
 ### cpage & rows 지원 서비스 목록
 
 - (1번) 공연목록 조회   (pblprfrService) : cpage 로직 완료
-- (3번) 공연시설 목록 조회   (prfplcService) : cpage 로직 완료 테스트x
-- (5번) 기획/제작사 목록 조회   (mnfctService) : cpage 로직 완료 테스트x
+- (3번) 공연시설 목록 조회   (prfplcService) : cpage 로직 완료
+- (5번) 기획/제작사 목록 조회   (mnfctService) : cpage 로직 완료
 - (14번) 공연별 통계 목록 조회   (prfstsPrfByService) : cpage 로직 완료
 - (15번) 공연시설별 통계 목록 조회   (prfstsPrfByFctService) : cpage 로직 완료
 - (17번) 수상작 목록 조회   (prfawadService) : cpage 로직 완료
@@ -35,7 +35,7 @@
 
 다음 확인 사항
 
-1. main_detail.py, main_facility.py 정상 동작 확인
+1. main_detail.py, main_facility.py 정상 동작 확인 o
 2. (11) 기간별 통계 결과 없음, (12) 지역별 통계 결과 없음, (13) 장르별 통계 결과 없음 디버깅
 3. 장기간 수집 테스트
 4. 분석 모델링

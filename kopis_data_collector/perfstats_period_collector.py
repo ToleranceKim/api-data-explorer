@@ -30,7 +30,7 @@ def collect_prfsts_total(ststype, stdate, eddate, service_key=SERVICE_KEY):
     data_dict = xmltodict.parse(response.text)
 
     # 루트 태그: <prfSts>, 반복 요소: <prfSt>
-    items = data_dict.get("prfSts", {}).get("prfSt", [])
+    items = data_dict.get("prfsts", {}).get("prfst", [])
     if isinstance(items, dict):
         items = [items]
 

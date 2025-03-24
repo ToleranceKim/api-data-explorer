@@ -27,7 +27,7 @@ def collect_prfsts_cate(stdate, eddate, service_key=SERVICE_KEY):
     data_dict = xmltodict.parse(response.text)
 
     # 루트: <Prfsts>, 반복: <prfst>
-    items = data_dict.get("Prfsts", {}).get("prfst", [])
+    items = data_dict.get("prfsts", {}).get("prfst", [])
     if isinstance(items, dict):
         items = [items]
 
