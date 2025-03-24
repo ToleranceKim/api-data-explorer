@@ -49,7 +49,7 @@ def collect_prffest_list(
     - 모든 페이지(cpage) 결과를 합친 pandas DataFrame
     """
     endpoint = "http://www.kopis.or.kr/openApi/restful/prffest"
-    all_pages = []
+    all_pages = []  # 페이지별 결과 누적
 
     for page in range(1, max_pages + 1):
         # 1) 요청 파라미터 구성
@@ -82,32 +82,33 @@ def collect_prffest_list(
         # 2) 요청
         response = requests.get(endpoint, params=params)
         if response.status_code != 200:
-            print(f"[collect_prffest_list_all] HTTP Error {response.status_code}, page={page}")
+            print(f"[collect_prffest_list] HTTP Error {response.status_code}, page={page}")
             break  # 필요 시 재시도 로직 추가 가능
 
         # 3) XML -> dict 파싱
         try:
             data_dict = xmltodict.parse(response.text)
         except Exception as e:
-            print(f"[collect_prffest_list_all] XML 파싱 오류: {e}")
+            print(f"[collect_prffest_list] XML 파싱 오류: {e}")
             break
 
         # OpenAPI 오류 태그 검사 (예: <OpenAPI_ServiceResponse>..)
         if "OpenAPI_ServiceResponse" in data_dict:
-            print("[collect_prffest_list_all] OpenAPI Error 응답:", data_dict)
+            print("[collect_prffest_list] OpenAPI Error 응답:", data_dict)
             break
 
         # 4) 실제 목록 추출
         dbs = data_dict.get("dbs")
         if not dbs:
-            print(f"[collect_prffest_list_all] 'dbs' 태그 없음 -> 종료(page={page})")
+            print(f"[collect_prffest_list] 'dbs' 태그 없음 -> 종료(page={page})")
             break
 
         items = dbs.get("db")
         if not items:
-            print(f"[collect_prffest_list_all] 'db' 태그 비었음 -> 종료(page={page})")
+            print(f"[collect_prffest_list] 'db' 태그 비었음 -> 종료(page={page})")
             break
 
+        # 단일 객체(dict)인 경우 -> 리스트로 변환
         if isinstance(items, dict):
             items = [items]
 
@@ -128,18 +129,18 @@ def collect_prffest_list(
 
         df_page = pd.DataFrame(page_records)
         if df_page.empty:
-            print(f"[collect_prffest_list_all] 페이지 {page} 결과 0건 -> 종료")
+            print(f"[collect_prffest_list] 페이지 {page} 결과 0건 -> 종료")
             break
 
         all_pages.append(df_page)
 
-        # 페이지 호출 간격
+        # 페이지 호출 간격 (과도 호출 방지)
         if sleep_sec > 0:
             time.sleep(sleep_sec)
 
         # rows보다 적게 왔다면 마지막 페이지로 간주 -> 종료
         if len(df_page) < rows:
-            print(f"[collect_prffest_list_all] (page={page}) 마지막 페이지로 판단 -> 종료")
+            print(f"[collect_prffest_list] (page={page}) 마지막 페이지로 판단 -> 종료")
             break
 
     # 6) 전체 병합
