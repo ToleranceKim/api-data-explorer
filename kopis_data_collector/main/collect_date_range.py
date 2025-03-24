@@ -48,6 +48,8 @@ from collectors.festival_list_collector import collect_prffest_list
 # (19) 극작가 목록 조회
 from collectors.playwright_list_collector import collect_prfer_list
 
+# config 설정 값 (날짜 범위)
+from config import START_DATE, END_DATE
 
 def main():
     """
@@ -57,8 +59,8 @@ def main():
     os.makedirs("./data_date_range", exist_ok=True)
 
     # 전체 수집 기간 설정 (예: 2024년 1월 1일 ~ 2024년 12월 31일)
-    start_date_str = "20230101"
-    end_date_str = "20230331"
+    start_date_str = START_DATE
+    end_date_str = END_DATE
 
     current = datetime.strptime(start_date_str, "%Y%m%d")
     end_date = datetime.strptime(end_date_str, "%Y%m%d")
