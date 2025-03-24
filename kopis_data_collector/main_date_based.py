@@ -57,8 +57,8 @@ def main():
     os.makedirs("./data_date_based", exist_ok=True)
 
     # 전체 수집 기간 설정 (예: 2024년 1월 1일 ~ 2024년 12월 31일)
-    start_date_str = "20220101"
-    end_date_str = "20220228"
+    start_date_str = "20230101"
+    end_date_str = "20230331"
 
     current = datetime.strptime(start_date_str, "%Y%m%d")
     end_date = datetime.strptime(end_date_str, "%Y%m%d")

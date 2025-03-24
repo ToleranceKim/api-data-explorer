@@ -1,0 +1,6 @@
+requests
+xmltodict
+pandas
+numpy
+python-dotenv
+scikit-learn
