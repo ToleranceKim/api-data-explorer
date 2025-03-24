@@ -4,49 +4,49 @@ import pandas as pd
 import os
 
 # (1) 공연목록 조회
-from performance_list_collector import collect_pblprfr_list
+from collectors.performance_list_collector import collect_pblprfr_list
 
 # (6) 예매상황판
-from boxoffice_status_collector import collect_boxoffice
+from collectors.boxoffice_status_collector import collect_boxoffice
 
 # (7) 예매통계 기간별 조회
-from ticketstats_period_collector import collect_boxstats
+from collectors.ticketstats_period_collector import collect_boxstats
 
 # (8) 예매통계 장르별 조회
-from ticketstats_genre_collector import collect_boxstats_cate
+from collectors.ticketstats_genre_collector import collect_boxstats_cate
 
 # (9) 예매통계 시간대별 조회
-from ticketstats_time_collector import collect_boxstats_time
+from collectors.ticketstats_time_collector import collect_boxstats_time
 
 # (10) 예매통계 가격대별 조회
-from ticketstats_price_collector import collect_boxstats_price
+from collectors.ticketstats_price_collector import collect_boxstats_price
 
 # (11) 기간별 통계 목록
-from perfstats_period_collector import collect_prfsts_total
+from collectors.perfstats_period_collector import collect_prfsts_total
 
 # (12) 지역별 통계 목록
-from perfstats_area_collector import collect_prfsts_area
+from collectors.perfstats_area_collector import collect_prfsts_area
 
 # (13) 장르별 통계 목록
-from perfstats_genre_collector import collect_prfsts_cate
+from collectors.perfstats_genre_collector import collect_prfsts_cate
 
 # (14) 공연별 통계 목록
-from perfstats_byperformance_collector import collect_prfsts_prfby
+from collectors.perfstats_byperformance_collector import collect_prfsts_prfby
 
 # (15) 공연시설별 통계 목록
-from perfstats_byvenue_collector import collect_prfsts_prfbyfct
+from collectors.perfstats_byvenue_collector import collect_prfsts_prfbyfct
 
 # (16) 가격대별 통계 목록
-from perfstats_price_collector import collect_prfsts_price
+from collectors.perfstats_price_collector import collect_prfsts_price
 
 # (17) 수상작 목록 조회
-from awards_list_collector import collect_prfawad_list
+from collectors.awards_list_collector import collect_prfawad_list
 
 # (18) 축제 목록 조회
-from festival_list_collector import collect_prffest_list
+from collectors.festival_list_collector import collect_prffest_list
 
 # (19) 극작가 목록 조회
-from playwright_list_collector import collect_prfer_list
+from collectors.playwright_list_collector import collect_prfer_list
 
 
 def main():
@@ -54,7 +54,7 @@ def main():
     날짜 파라미터가 필요한 (혹은 권장되는) 거의 모든 서비스를
     31일 간격으로 반복 호출해, CSV를 생성하는 예시 코드입니다.
     """
-    os.makedirs("./data_date_based", exist_ok=True)
+    os.makedirs("./data_date_range", exist_ok=True)
 
     # 전체 수집 기간 설정 (예: 2024년 1월 1일 ~ 2024년 12월 31일)
     start_date_str = "20230101"
@@ -216,7 +216,7 @@ def main():
         current = period_end + timedelta(days=1)
 
     # 반복문 끝난 후, 각각 병합 & 저장
-    save_path = "./data_date_based"
+    save_path = "./data_date_range"
     
     if dfs_pblprfr_list:
         merged_1 = pd.concat(dfs_pblprfr_list, ignore_index=True)
